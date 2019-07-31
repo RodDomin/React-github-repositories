@@ -102,3 +102,69 @@ export const IssueList = styled.ul`
     }
   }
 `;
+
+export const Filters = styled.form`
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+
+  select {
+    margin-right: 10px;
+    appearance: none;
+    width: 75px;
+    height: 35px;
+
+    border-radius: 4px;
+    border-width: 0px;
+    background-color: #7159c1;
+    color: #fff;
+
+    font-size: 14px;
+    padding: 10px 5px;
+  }
+
+  input {
+    border: none;
+    width: 75px;
+    height: 35px;
+
+    background-color: #7159c1;
+    color: #fff;
+  }
+
+  input:hover {
+  }
+`;
+
+export const Pages = styled.div`
+  margin-top: 30px;
+
+  display: flex;
+  justify-content: space-around;
+  color: black;
+
+  button {
+    border: 1px solid rgb(228, 228, 228);
+    border-radius: 5px;
+
+    width: 65px;
+    height: 32.5px;
+
+    background: white;
+    transition: 300ms;
+  }
+
+  button:hover {
+    background-color: #7159c1;
+    color: white;
+  }
+
+  p {
+    padding: 7.5px 15px;
+
+    border: 1px solid rgb(228, 228, 228);
+    border-radius: 5px;
+
+    background: white;
+  }
+`;

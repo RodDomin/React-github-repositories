@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import Container from '../../Components/Container';
 
-import { Loading, Owner, IssueList } from './styles';
+import { Loading, Owner, IssueList, Filters, Pages } from './styles';
 
 export default class Repository extends Component {
   static propTypes = {
@@ -19,10 +19,12 @@ export default class Repository extends Component {
     repository: {},
     issues: [],
     loading: true,
+    page: 1,
   };
 
   async componentDidMount() {
     const { match } = this.props;
+    const { page } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
@@ -32,6 +34,7 @@ export default class Repository extends Component {
         params: {
           state: 'open',
           per_page: 5,
+          page,
         },
       }),
     ]);
@@ -43,8 +46,51 @@ export default class Repository extends Component {
     });
   }
 
+  handleSubmit = async e => {
+    e.preventDefault();
+    const { match } = this.props;
+
+    const repoName = decodeURIComponent(match.params.repository);
+
+    const op = document.querySelector('select').value;
+
+    const issues = await api.get(`repos/${repoName}/issues`, {
+      params: {
+        state: op,
+        per_page: 5,
+      },
+    });
+
+    this.setState({ loading: false, issues: issues.data, page: 1 });
+  };
+
+  handlePage = async dec => {
+    const { page } = this.state;
+    const { match } = this.props;
+    const repoName = decodeURIComponent(match.params.repository);
+    const op = document.querySelector('select').value;
+
+    if (dec === 1) {
+      this.setState({ page: page + 1 });
+    }
+
+    if (page > 1 && dec === 0) {
+      this.setState({ page: page - 1 });
+    }
+
+    const issues = await api.get(`repos/${repoName}/issues`, {
+      params: {
+        state: op,
+        per_page: 5,
+        page,
+      },
+    });
+
+    return this.setState({ issues: issues.data });
+  };
+
   render() {
-    const { loading, repository, issues } = this.state;
+    const { loading, repository, issues, page } = this.state;
 
     if (loading) {
       return <Loading>Carregando</Loading>;
@@ -59,7 +105,14 @@ export default class Repository extends Component {
             <h1>{repository.name}</h1>
             <p>{repository.description}</p>
           </Owner>
-
+          <Filters onSubmit={this.handleSubmit}>
+            <select>
+              <option value="open">Abertos</option>
+              <option value="all">Todos</option>
+              <option value="closed">Fechados</option>
+            </select>
+            <input type="submit" value="Filtrar" />
+          </Filters>
           <IssueList>
             {issues.map(issue => (
               <li key={String(issue.id)}>
@@ -76,6 +129,15 @@ export default class Repository extends Component {
               </li>
             ))}
           </IssueList>
+          <Pages>
+            <button onClick={() => this.handlePage(0)} type="button">
+              Anterior
+            </button>
+            <p>{page}</p>
+            <button onClick={() => this.handlePage(1)} type="button">
+              Proxima
+            </button>
+          </Pages>
         </Container>
       </>
     );

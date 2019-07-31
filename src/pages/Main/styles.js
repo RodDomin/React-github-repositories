@@ -30,6 +30,9 @@ export const Form = styled.form`
     border: 1px solid #eee;
     padding: 10px 15px;
     border-radius: 4px;
+    border-color: ${props =>
+      props.error ? 'rgba(255, 0, 0, 0.8)' : 'rgb(238, 238, 238)'};
+    transition: 500ms;
     font-size: 16px;
   }
 `;
